@@ -1,0 +1,32 @@
+{
+    "name": "kigkonsult/http",
+    "type": "library",
+    "description": "fetch an URL (file) resource content",
+    "keywords": [
+        "http",
+        "GET",
+        "Curl",
+        "get",
+        "resource",
+        "file",
+        "content"
+    ],
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Kjell-Inge Gustafsson",
+            "email": "ical@kigkonsult.se"
+        }
+    ],
+    "autoload": {
+        "files": ["autoload.php"],
+        "psr-4": { "Kigkonsult\\Http\\": "src/" }
+    },
+    "require": {
+        "ext-curl": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.5.13"
+    }
+}
