@@ -1,5 +1,5 @@
 {
-    "name": "kigkonsult/http",
+    "name": "kigkonsult/urlrsrc",
     "type": "library",
     "description": "fetch an URL (file) resource content",
     "keywords": [
@@ -19,6 +19,15 @@
             "email": "ical@kigkonsult.se"
         }
     ],
+    "support": {
+        "issues": "https://github.com/iCalcreator/urlrsrc/issues"
+    },
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://paypal.me/kigkonsult"
+        }
+    ],
     "autoload": {
         "files": ["autoload.php"],
         "psr-4": { "Kigkonsult\\Http\\": "src/" }
@@ -30,3 +39,4 @@
         "phpunit/phpunit": "6.5.13"
     }
 }
+
