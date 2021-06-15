@@ -89,6 +89,18 @@ CurlOpts argument array key value overwrites default (above) if key is set.
 
 More info about Curl options at [php.net].
 
+
+###### Support
+
+For support use [github.com] UrlRsrc. Non-emergence support issues are, unless sponsored, fixed in due time.
+
+
+###### Sponsorship
+
+Donation using <a href="https://paypal.me/kigkonsult" rel="nofollow">paypal.me/kigkonsult</a> are appreciated.
+For invoice, <a href="mailto:ical@kigkonsult.se">please e-mail</a>.
+
+
 ###### Installation
 
 [Composer], from the Command Line:
@@ -129,4 +141,5 @@ This project is licensed under the LGPLv3 License
 
 
 [Composer]:https://getcomposer.org/
+[github.com]:https://github.com/iCalcreator/UrlRsrc
 [php.net]:https://www.php.net/manual/en/function.curl-setopt.php
