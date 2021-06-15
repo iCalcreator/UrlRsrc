@@ -2,24 +2,27 @@
 /**
  * UrlRsrc - fetch an URL (file) resource result
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/UrlRsrc>
- *
  * This file is part of UrlRsrc.
  *
- * UrlRsrc is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @license   Subject matter of licence is the software UrlRsrc.
+ *            The above copyright, link and this licence notice shall be
+ *            included in all copies or substantial portions of the UrlRsrc.
  *
- * UrlRsrc is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *            UrlRsrc is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with UrlRsrc.  If not, see <https://www.gnu.org/licenses/>.
+ *            UrlRsrc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with UrlRsrc. If not, see <https://www.gnu.org/licenses/>.
  */
 spl_autoload_register(
     function( $class ) {

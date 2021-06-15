@@ -2,25 +2,29 @@
 /**
  * UrlRsrc - fetch an URL (file) resource result
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/UrlRsrc>
- *
  * This file is part of UrlRsrc.
  *
- * UrlRsrc is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @license   Subject matter of licence is the software UrlRsrc.
+ *            The above copyright, link and this licence notice shall be
+ *            included in all copies or substantial portions of the UrlRsrc.
  *
- * UrlRsrc is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *            UrlRsrc is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with UrlRsrc.  If not, see <https://www.gnu.org/licenses/>.
+ *            UrlRsrc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with UrlRsrc. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Http;
 
 use InvalidArgumentException;
@@ -33,7 +37,8 @@ class UrlRsrcTest extends TestCase
     /**
      * getContentTest1 provider
      */
-    public function getContentTest1Provider() {
+    public function getContentTest1Provider() : array
+    {
 
         $dataArr = [];
 
@@ -98,8 +103,14 @@ class UrlRsrcTest extends TestCase
      * @param array  $curlOpts
      * @param string $expPart
      */
-    public function getContentTest1( $case, $url, $urlArgs, $curlOpts, $expPart = null ) {
-
+    public function getContentTest1(
+        int $case,
+        string $url,
+        $urlArgs,
+        $curlOpts,
+        $expPart = null
+    )
+    {
         $content = UrlRsrc::getContent( $url, $urlArgs, $curlOpts, $sizeDownload, $time );
 
         $this->assertNotEmpty(
@@ -126,7 +137,8 @@ class UrlRsrcTest extends TestCase
     /**
      * @test
      */
-    public function exceptionTest2() {
+    public function exceptionTest2()
+    {
         try {
             $content = UrlRsrc::getContent( 'this is not an URL' );
             $this->assertTrue( false, '21 NO exception !!' );
@@ -139,7 +151,8 @@ class UrlRsrcTest extends TestCase
     /**
      * @test
      */
-    public function exceptionTest3() {
+    public function exceptionTest3()
+    {
         try {
             $content = UrlRsrc::getContent(
                 'http://schemas.xmlsoap.org/ws/2004/08/addressing/',
@@ -156,7 +169,8 @@ class UrlRsrcTest extends TestCase
     /**
      * @test
      */
-    public function exceptionTest4() {
+    public function exceptionTest4()
+    {
         try {
             $content = UrlRsrc::getContent(
                 'http://www.fakeDomain.com'
@@ -171,7 +185,8 @@ class UrlRsrcTest extends TestCase
     /**
      * @ test
      */
-    public function displayConstantsTest() {
+    public function displayConstantsTest()
+    {
         $this->assertTrue( true );
 
         echo 'CURLOPT_FAILONERROR    : ' . CURLOPT_FAILONERROR    . PHP_EOL;

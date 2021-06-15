@@ -2,25 +2,29 @@
 /**
  * UrlRsrc - fetch an URL (file) resource result
  *
- * Copyright 2020 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
- * Link <https://kigkonsult.se>
- * Support <https://github.com/iCalcreator/UrlRsrc>
- *
  * This file is part of UrlRsrc.
  *
- * UrlRsrc is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
+ * @copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @link      https://kigkonsult.se
+ * @license   Subject matter of licence is the software UrlRsrc.
+ *            The above copyright, link and this licence notice shall be
+ *            included in all copies or substantial portions of the UrlRsrc.
  *
- * UrlRsrc is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *            UrlRsrc is free software: you can redistribute it and/or modify
+ *            it under the terms of the GNU Lesser General Public License as
+ *            published by the Free Software Foundation, either version 3 of
+ *            the License, or (at your option) any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with UrlRsrc.  If not, see <https://www.gnu.org/licenses/>.
+ *            UrlRsrc is distributed in the hope that it will be useful,
+ *            but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *            GNU Lesser General Public License for more details.
+ *
+ *            You should have received a copy of the GNU Lesser General Public License
+ *            along with UrlRsrc. If not, see <https://www.gnu.org/licenses/>.
  */
+declare( strict_types = 1 );
 namespace Kigkonsult\Http;
 
 use InvalidArgumentException;
@@ -33,7 +37,6 @@ use function curl_getinfo;
 use function curl_init;
 use function curl_setopt_array;
 use function filter_var;
-use function is_null;
 use function http_build_query;
 use function microtime;
 use function parse_url;
@@ -46,7 +49,6 @@ use function var_export;
 
 class UrlRsrc
 {
-
     /**
      * Version
      *
@@ -57,7 +59,7 @@ class UrlRsrc
     /**
      * Default cUrl options
      *
-     * @var string[]
+     * @var array
      * @link https://www.php.net/manual/en/function.curl-setopt.php
      */
     private static $CURLOPTS = [
@@ -125,7 +127,8 @@ class UrlRsrc
     /**
      * class construct
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->curlOpts = self::$CURLOPTS;
     }
 
@@ -134,9 +137,9 @@ class UrlRsrc
      *
      * @param string $url            the url (file) resource
      *                               for missning scheme 'http' is used
-     * @param array  $urlArgs        opt, *( urlArgKey => value )
+     * @param null|array  $urlArgs   opt, *( urlArgKey => value )
      *                               if not empty, appended to url
-     * @param array  $curlOpts       opt, *( curlOptConstant => value )
+     * @param null|array  $curlOpts  opt, *( curlOptConstant => value )
      *                               overwrites self::$CURLOPTS key value if key exists
      *                               The keys should be valid curl_setopt() constants or their integer equivalents.
      * @param int    $sizeDownload   hold (byte-)size of downloaded resource
@@ -144,14 +147,20 @@ class UrlRsrc
      * @return string
      * @throws InvalidArgumentException
      * @throws RuntimeException
-     * @static
      */
-    public static function getContent( $url, $urlArgs = [], $curlOpts = [], & $sizeDownload = 0, & $time = 0.0 ) {
+    public static function getContent(
+        string $url,
+        $urlArgs = [],
+        $curlOpts = [],
+        & $sizeDownload = 0,
+        & $time = 0.0
+    ) : string
+    {
         static $SIZEDOWNLOAD = 'size_download';
         $startTime = microtime( true );
         $factory   = new self();
-        $factory->setUrl( $url, $urlArgs )
-            ->setCurlOpts( $curlOpts )
+        $factory->setUrl( $url, ( $urlArgs ?? [] ))
+            ->setCurlOpts( $curlOpts ?? [])
             ->initCurlResource()
             ->setCurlhandlerOptions()
             ->curlExec();
@@ -165,9 +174,9 @@ class UrlRsrc
      * @param array  $urlArgs
      * @return static
      * @throws InvalidArgumentException
-     * @access private
      */
-    private function setUrl( $url, $urlArgs ) {
+    private function setUrl( string $url, array $urlArgs ) : self
+    {
         $url = self::assureUrlScheme( $url );
         $url = self::getUrlWithAppendedParams( $url, $urlArgs );
         self::assertUrl( $url );
@@ -176,6 +185,9 @@ class UrlRsrc
         return $this;
     }
 
+    /**
+     * @var string
+     */
     private static $FMTERRURL = '(#%d) \'%s\' is not a valid url';
 
     /**
@@ -183,27 +195,25 @@ class UrlRsrc
      *
      * @param string $url
      * @return string
-     * @access private
-     * @static
      */
-    private static function assureUrlScheme( $url ) {
+    private static function assureUrlScheme( string $url ) : string
+    {
         static $HTTP  = 'http://';
         if( false === ( $scheme = parse_url( $url, PHP_URL_SCHEME ))) {
             throw new InvalidArgumentException( sprintf( self:: $FMTERRURL, 1, $url ));
         }
-        return is_null( $scheme ) ? $HTTP . $url : $url;
+        return empty( $scheme ) ? $HTTP . $url : $url;
     }
 
     /**
      * Return url with appended params
      *
      * @param string $url
-     * @param array  $urlArgs
+     * @param null|array  $urlArgs
      * @return string
-     * @access private
-     * @static
      */
-    private static function getUrlWithAppendedParams( $url, $urlArgs ) {
+    private static function getUrlWithAppendedParams( string $url, $urlArgs = [] ) : string
+    {
         static $Q     = '?';
         static $ET    = '&';
         static $EMPTY = '';
@@ -214,7 +224,7 @@ class UrlRsrc
             throw new InvalidArgumentException( sprintf( self:: $FMTERRURL, 2, $url ));
         }
         $appenChar = empty( $query ) ? $Q : $ET;
-        return $url . $appenChar . http_build_query((array) $urlArgs, $EMPTY, $ET );
+        return $url . $appenChar . http_build_query(( $urlArgs ?? [] ), $EMPTY, $ET );
     }
 
     /**
@@ -222,10 +232,9 @@ class UrlRsrc
      *
      * @param string $url
      * @throws InvalidArgumentException
-     * @access private
-     * @static
      */
-    private static function assertUrl( $url ) {
+    private static function assertUrl( string $url )
+    {
         static $SP0    = '';
         static $CSS    = '://';
         static $COLON  = ':';
@@ -237,10 +246,10 @@ class UrlRsrc
         static $PATH   = 'path';
         $urlArr = self::mb_parse_url( $url );
         $urlTmp = $SP0;
-        $schemeSet = $hostSet = false;
+        $isSchemeSet = $isHostSet = false;
         if( isset( $urlArr[$SCHEME] ) && ! empty( $urlArr[$SCHEME] )) {
             $urlTmp    = $urlArr[$SCHEME] . $CSS;
-            $schemeSet = true;
+            $isSchemeSet = true;
         }
         if( isset( $urlArr[$USER] ) && ! empty( $urlArr[$USER] )) {
             $urlTmp .= $urlArr[$USER];
@@ -250,19 +259,19 @@ class UrlRsrc
         }
         if( isset( $urlArr[$HOST] ) && ! empty( $urlArr[$HOST] )) {
             $urlTmp .= $urlArr[$HOST];
-            $hostSet = self::hasInvalidCharacter( $urlArr[$HOST] ) ? false : true;
+            $isHostSet = ( ! self::hasInvalidCharacter( $urlArr[$HOST] ));
         }
         if( isset( $urlArr[$PORT] ) && ! empty( $urlArr[$PORT] )) {
             $urlTmp .= $COLON . $urlArr[$PORT];
         }
         if( isset( $urlArr[$PATH] ) && ! empty( $urlArr[$PATH] )) {
             $urlTmp .= $urlArr[$PATH];
-            $hostSet = self::hasInvalidCharacter( $urlArr[$PATH] ) ? false : true;
+            $isHostSet = ( ! self::hasInvalidCharacter( $urlArr[$PATH] ));
         }
         if( false !== filter_var( $urlTmp, FILTER_VALIDATE_URL )) {
             return;
         }
-        elseif( $schemeSet && $hostSet ) { // but accept utf8 chars
+        elseif( $isSchemeSet && $isHostSet ) { // but accept utf8 chars
             return;
         }
         throw new InvalidArgumentException( sprintf( self:: $FMTERRURL, 4, $urlTmp ));
@@ -271,19 +280,18 @@ class UrlRsrc
     /**
      * UTF-8 aware parse_url() replacement.
      *
+     * @param string $url
      * @return array
      * @link https://www.php.net/manual/en/function.parse-url.php#114817
-     * @access private
-     * @static
      */
-    private static function mb_parse_url( $url ) {
+    private static function mb_parse_url( string $url ) : array
+    {
         static $REGEX = '%[^:/@?&=#]+%usD';
         $enc_url = preg_replace_callback(
             $REGEX,
             function( $matches ) { return urlencode($matches[0] ); },
             $url
         );
-        ;
         if( false === ( $parts = parse_url( $enc_url ))) {
             throw new InvalidArgumentException( sprintf( self:: $FMTERRURL, 5, $url ));
         }
@@ -298,10 +306,9 @@ class UrlRsrc
      *
      * @param string $value
      * @return bool
-     * @static
-     * @access private
      */
-    private static function hasInvalidCharacter( $value ) {
+    private static function hasInvalidCharacter( string $value ) : bool
+    {
         static $INVCHARS = [
             ' ',
             "<", ">" , "%", "#", '"',
@@ -311,16 +318,15 @@ class UrlRsrc
             if( false !== strpos( $value, $invChar )) {
                 return true;
             }
-        }
+        } // end foreach
         return false;
     }
 
     /**
      * Set default curlOpts SSL_VERIFYPEER OFF if url scheme is 'http', https gives ON
-     *
-     * @access private
      */
-    private function defaultCurlOptionsSslCheck() {
+    private function defaultCurlOptionsSslCheck()
+    {
         static $HTTP  = 'http';
         static $HTTPS = 'https';
         if( false === ( $scheme = parse_url( $this->url, PHP_URL_SCHEME ))) {
@@ -342,7 +348,8 @@ class UrlRsrc
      * @return static
      * @throws RuntimeException
      */
-    public function initCurlResource() {
+    public function initCurlResource() : self
+    {
         static $FMT = 'cUrl init error, url %s';
         if( false === ( $this->curlResource = curl_init( $this->url ))) {
             throw new RuntimeException( sprintf( $FMT, $this->url ));
@@ -356,8 +363,9 @@ class UrlRsrc
      * @param array $curlOpts
      * @return static
      */
-    public function setCurlOpts( $curlOpts ) {
-        foreach((array) $curlOpts as $key => $value ) {
+    public function setCurlOpts( array $curlOpts ) : self
+    {
+        foreach( $curlOpts as $key => $value ) {
             $this->curlOpts[$key] = $value;
         }
         return $this;
@@ -369,7 +377,8 @@ class UrlRsrc
      * @return static
      * @throws RuntimeException
      */
-    public function setCurlhandlerOptions() {
+    public function setCurlhandlerOptions() : self
+    {
         static $FMT = 'cUrl setOptions error, url %s, options : %s';
         if( false === curl_setopt_array( $this->curlResource, $this->curlOpts )) {
             throw new RuntimeException( sprintf( $FMT, $this->url, var_export( $this->curlOpts, true )));
@@ -381,17 +390,16 @@ class UrlRsrc
      * @param string $key
      * @return string|array
      */
-    public function getCurlInfo( $key = null ) {
-        if( is_null( $key )) {
-            return $this->curlInfo;
-        }
-        return $this->curlInfo[$key];
+    public function getCurlInfo( $key = null )
+    {
+        return empty( $key ) ? $this->curlInfo : $this->curlInfo[$key];
     }
 
     /**
      * @return string
      */
-    public function getResult() {
+    public function getResult() : string
+    {
         return $this->result;
     }
 
@@ -402,7 +410,8 @@ class UrlRsrc
      *
      * @return static
      */
-    public function curlExec() {
+    public function curlExec() : self
+    {
         static $FMT1    = 'cUrl not initialized, url %s, cUrlOpts : %s';
         static $FMT7    = 'cUrl error (#%d) %s, url %s, cUrlOpts : %s, debugInfo : %s';
         if( ! is_resource( $this->curlResource )) {
@@ -432,5 +441,4 @@ class UrlRsrc
         }
         return $this;
     }
-
 }
