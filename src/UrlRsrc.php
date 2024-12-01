@@ -5,7 +5,7 @@
  * This file is part of UrlRsrc.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software UrlRsrc.
  *            The above copyright, link and this licence notice shall be
@@ -27,6 +27,7 @@
 declare( strict_types = 1 );
 namespace Kigkonsult\Http;
 
+use CurlHandle;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -54,7 +55,7 @@ class UrlRsrc
      *
      * @var string
      */
-    private static $VERSION = 'kigkonsult.se UrlRsrc 1.0';
+    private static string $VERSION = 'kigkonsult.se UrlRsrc 1.0';
 
     /**
      * Default cUrl options
@@ -62,7 +63,7 @@ class UrlRsrc
      * @var array
      * @link https://www.php.net/manual/en/function.curl-setopt.php
      */
-    private static $CURLOPTS = [
+    private static array $CURLOPTS = [
         // fail if HTTP return code >= 400
         CURLOPT_FAILONERROR    => true,
 
@@ -102,27 +103,27 @@ class UrlRsrc
     /**
      * @var string
      */
-    private $url = null;
+    private string $url;
 
     /**
-     * @var resource
+     * @var CurlHandle
      */
-    private $curlResource = null;
+    private CurlHandle $curlResource;
 
     /**
      * @var array
      */
-    private $curlOpts = [];
+    private array $curlOpts = [];
 
     /**
      * @var string
      */
-    private $result = null;
+    private string $result;
 
     /**
      * @var array
      */
-    private $curlInfo = [];
+    private array $curlInfo = [];
 
     /**
      * class construct
@@ -130,6 +131,23 @@ class UrlRsrc
     public function __construct()
     {
         $this->curlOpts = self::$CURLOPTS;
+    }
+
+    /**
+     * Class factory method
+     *
+     * @param null|string $url
+     * @param null|array  $urlArgs
+     * @return static
+     * @throws InvalidArgumentException
+     */
+    public static function factory( ? string $url = null, ? array $urlArgs = null ) : static
+    {
+        $factory   = new static();
+        if( null !== $url) {
+            $factory->setUrl( $url, ( $urlArgs ?? [] ) );
+        }
+        return $factory;
     }
 
     /**
@@ -150,17 +168,17 @@ class UrlRsrc
      */
     public static function getContent(
         string $url,
-        $urlArgs = [],
-        $curlOpts = [],
-        & $sizeDownload = 0,
-        & $time = 0.0
+        ? array $urlArgs = [],
+        ? array $curlOpts = [],
+        ? int & $sizeDownload = 0,
+        ? float & $time = 0.0
     ) : string
     {
+
         static $SIZEDOWNLOAD = 'size_download';
         $startTime = microtime( true );
-        $factory   = new self();
-        $factory->setUrl( $url, ( $urlArgs ?? [] ))
-            ->setCurlOpts( $curlOpts ?? [])
+        $factory   = self::factory( $url, ( $urlArgs ?? [] ))
+            ->setCurlOpts( $curlOpts ?? [] )
             ->initCurlResource()
             ->setCurlhandlerOptions()
             ->curlExec();
@@ -175,7 +193,7 @@ class UrlRsrc
      * @return static
      * @throws InvalidArgumentException
      */
-    private function setUrl( string $url, array $urlArgs ) : self
+    private function setUrl( string $url, array $urlArgs ) : static
     {
         $url = self::assureUrlScheme( $url );
         $url = self::getUrlWithAppendedParams( $url, $urlArgs );
@@ -212,7 +230,7 @@ class UrlRsrc
      * @param null|array  $urlArgs
      * @return string
      */
-    private static function getUrlWithAppendedParams( string $url, $urlArgs = [] ) : string
+    private static function getUrlWithAppendedParams( string $url, ? array $urlArgs = [] ) : string
     {
         static $Q     = '?';
         static $ET    = '&';
@@ -224,16 +242,17 @@ class UrlRsrc
             throw new InvalidArgumentException( sprintf( self:: $FMTERRURL, 2, $url ));
         }
         $appenChar = empty( $query ) ? $Q : $ET;
-        return $url . $appenChar . http_build_query(( $urlArgs ?? [] ), $EMPTY, $ET );
+        return $url . $appenChar . http_build_query( $urlArgs, $EMPTY, $ET );
     }
 
     /**
      * Assert url
      *
      * @param string $url
+     * @return void
      * @throws InvalidArgumentException
      */
-    private static function assertUrl( string $url )
+    private static function assertUrl( string $url ) : void
     {
         static $SP0    = '';
         static $CSS    = '://';
@@ -324,8 +343,10 @@ class UrlRsrc
 
     /**
      * Set default curlOpts SSL_VERIFYPEER OFF if url scheme is 'http', https gives ON
+     *
+     * @return void
      */
-    private function defaultCurlOptionsSslCheck()
+    private function defaultCurlOptionsSslCheck() : void
     {
         static $HTTP  = 'http';
         static $HTTPS = 'https';
@@ -361,11 +382,18 @@ class UrlRsrc
      * Set cUrl options, overwrite if key exists, NO key assert
      *
      * @param array $curlOpts
+     * @throws InvalidArgumentException
      * @return static
      */
-    public function setCurlOpts( array $curlOpts ) : self
+    public function setCurlOpts( array $curlOpts ) : static
     {
+        static $CURLOPT = 'CURLOPT_';
+        static $FMT     = 'cUrl CURLOPT error, %s -> %s';
         foreach( $curlOpts as $key => $value ) {
+            if( ! is_int( $key ) &&
+                ! str_starts_with( $key, $CURLOPT )) {
+                throw new InvalidArgumentException( sprintf( $FMT, $key, $value ));
+            }
             $this->curlOpts[$key] = $value;
         }
         return $this;
@@ -387,10 +415,10 @@ class UrlRsrc
     }
 
     /**
-     * @param string $key
-     * @return string|array
+     * @param null|string $key
+     * @return mixed
      */
-    public function getCurlInfo( $key = null )
+    public function getCurlInfo( ? string $key = null ) : mixed
     {
         return empty( $key ) ? $this->curlInfo : $this->curlInfo[$key];
     }
@@ -410,11 +438,11 @@ class UrlRsrc
      *
      * @return static
      */
-    public function curlExec() : self
+    public function curlExec() : static
     {
         static $FMT1    = 'cUrl not initialized, url %s, cUrlOpts : %s';
         static $FMT7    = 'cUrl error (#%d) %s, url %s, cUrlOpts : %s, debugInfo : %s';
-        if( ! is_resource( $this->curlResource )) {
+        if( empty( $this->curlResource )) {
             if( ! empty( $this->url )) {
                 $this->initCurlResource();
             }

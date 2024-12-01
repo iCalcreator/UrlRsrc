@@ -103,6 +103,8 @@ For invoice, <a href="mailto:ical@kigkonsult.se">please e-mail</a>.
 
 ###### Installation
 
+Note, for PHP 7, use version 1.1.
+
 [Composer], from the Command Line:
 
 ``` php

@@ -5,7 +5,7 @@
  * This file is part of UrlRsrc.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software UrlRsrc.
  *            The above copyright, link and this licence notice shall be
@@ -62,8 +62,10 @@ class UrlRsrcTest extends TestCase
             113,
             'http://schemas.xmlsoap.org/ws/2004/08/addressing/',
             [],
-            CURLOPT_HTTPHEADER => [
-                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            [
+                CURLOPT_HTTPHEADER => [
+                    'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                ]
             ],
             'schema',
         ];
@@ -84,8 +86,10 @@ class UrlRsrcTest extends TestCase
                 't'  => 'ffsb',
                 'ia' => 'cryptocurrency'
             ],
-            CURLOPT_HTTPHEADER => [
-                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            [
+                CURLOPT_HTTPHEADER => [
+                    'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                ]
             ],
             'html',
         ];
@@ -111,6 +115,8 @@ class UrlRsrcTest extends TestCase
         $expPart = null
     )
     {
+//      echo 'start ' . $case . PHP_EOL;
+
         $content = UrlRsrc::getContent( $url, $urlArgs, $curlOpts, $sizeDownload, $time );
 
         $this->assertNotEmpty(
@@ -161,7 +167,7 @@ class UrlRsrcTest extends TestCase
             );
             $this->assertTrue( false, '31 NO exception !!' );
         }
-        catch( RuntimeException $e ) {
+        catch( InvalidArgumentException|RuntimeException $e ) {
             $this->assertTrue( true );
         }
     }

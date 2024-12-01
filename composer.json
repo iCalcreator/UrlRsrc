@@ -26,14 +26,14 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/iCalcreator/urlrsrc/issues"
+        "issues": "https://github.com/iCalcreator/urlrsrc/issues",
     },
     "autoload": {
         "files": ["autoload.php"],
         "psr-4": { "Kigkonsult\\Http\\": "src/" }
     },
     "require": {
-        "php": ">=7.0",
+        "php": ">=8.0",
         "ext-curl": "*"
     },
     "require-dev": {

@@ -5,7 +5,7 @@
  * This file is part of UrlRsrc.
  *
  * @author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- * @copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ * @copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  * @link      https://kigkonsult.se
  * @license   Subject matter of licence is the software UrlRsrc.
  *            The above copyright, link and this licence notice shall be

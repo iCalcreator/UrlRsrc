@@ -5,7 +5,7 @@
  This file is part of UrlRsrc.
 
  author    Kjell-Inge Gustafsson, kigkonsult <ical@kigkonsult.se>
- copyright 2020-2021 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
+ copyright 2020-2024 Kjell-Inge Gustafsson, kigkonsult, All rights reserved
  link      https://kigkonsult.se
  license   Subject matter of licence is the software UrlRsrc.
            The above copyright, link and this licence notice shall be
@@ -25,51 +25,44 @@
            along with UrlRsrc. If not, see <https://www.gnu.org/licenses/>.
 -->
 <phpunit backupGlobals="false"
-         backupStaticAttributes="false"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         cacheResult="false"
+         executionOrder="default"
          processIsolation="true"
-         syntaxCheck="false"
-         bootstrap="autoload.php"
->
+         resolveDependencies="false"
+         displayDetailsOnTestsThatTriggerWarnings="true">
     <testsuites>
         <testsuite name="UrlRsrc Tests">
             <file>test/UrlRsrcTest.php</file>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="true">
+    <source>
+        <include>
             <file>src/UrlRsrc.php</file>
-        </whitelist>
-    </filter>
+        </include>
+    </source>
+    <coverage
+            includeUncoveredFiles="false"
+            disableCodeCoverageIgnore="true">
+        <!-- Require the PHP Xdebug (2.7.0 or later) and tokenizer extensions-->
+        <!-- Remove or comment after your own choice-->
+        <!-- Note, all output in report/logging will be saved in 'testDocs' folder -->
+        <report>
+            <!-- clover outputFile="testDocs/clover.xml"/ -->
+            <!-- crap4j outputFile="testDocs/crap4j.xml" threshold="50"/ -->
+            <html outputDirectory="testDocs" lowUpperBound="60" highLowerBound="80"/>
+            <!-- php outputFile="testDocs/coverage.php"/ -->
+            <!-- text outputFile="testDocs/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/ -->
+            <!-- xml outputDirectory="testDocs"/ -->
+        </report>
+    </coverage>
     <logging>
         <!-- Remove or comment after your own choice-->
         <!-- All logs will be saved in 'testDocs' folder -->
-        <log type="coverage-html"
-             target="testDocs/PHPUnitCoverage"
-             lowUpperBound="35"
-             highLowerBound="70"/>
-        <!--log type="coverage-clover"
-             target="testDocs/coverage.xml"/-->
-        <!--log type="coverage-php"
-             target="testDocs/coverage.serialized"/-->
-        <!--
-        <log type="coverage-text"
-             target="testDocs/PHPUnitReport.txt"
-             showUncoveredFiles="true"/>
-        -->
-        <!--log type="json"
-             target="testDocs/logfile.json"/-->
-        <!--log type="tap"
-             target="testDocs/logfile.tap"/-->
-        <!--log type="junit"
-             target="testDocs/logfile.xml"
-             logIncompleteSkipped="false"/-->
-        <!--log type="testdox-html"
-             target="testDocs/testdox.html"/-->
-        <!--log type="testdox-text"
-             target="testDocs/testdox.txt"/-->
+        <!-- junit outputFile="testDocs/junit.xml"/ -->
+        <!-- teamcity outputFile="testDocs/teamcity.txt"/ -->
+        <!-- testdoxHtml outputFile="testDocs/testdox.html"/ -->
+        <!-- testdoxText outputFile="testDocs/testdox.txt"/ -->
+        <!-- testdoxXml outputFile="testDocs/testdox.xml"/ -->
     </logging>
 </phpunit>
